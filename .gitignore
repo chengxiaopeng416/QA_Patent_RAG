@@ -1,0 +1,35 @@
+# 环境变量与敏感信息（切勿提交）
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+*~
+
+# IDE
+.idea/
+.vscode/
+
+# 运行时数据（向量索引 / 会话记忆数据库）
+chroma_index/
+chroma/
+chat_memory.db
+chat_memory.db-shm
+chat_memory.db-wal
+
+# 日志与临时文件
+logs/
+tmp_upload/
+*.log
+
+# 个人笔记（不入库）
+项目面试问答.md
+该项目短期记忆加法.md
+企业知识库项目的完整流程.md
+
+# 第三方资料与答辩材料（不上传，仅留本机）
+*.pdf
+答辩/

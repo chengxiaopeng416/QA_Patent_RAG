@@ -1,0 +1,12 @@
+阅读技术专利文献分析 PatentRAG-Agent项目中api目录下的接口文件，根据接口创建一个前端项目，项目名称为PARAG_front，要求：
+1.技术栈：vue-cli(3.0)、element-ui、axios
+2.登录页面实现登录方式：1.用户名密码登录
+3.后台服务返回的token要保存缓存中，除了登录相关的接口外，向其他接口发送请求时都要携带token
+4.前端需要添加导航钩子，如果绕过登录页面直接访问其它页面时，导航到登录页面
+5./api/admin/upload接口不要直接在页面上显式
+6.前端要能接收后台服务的流式输出，实现打字机效果
+7.要能解析markdown格式，并高亮显示
+8.项目生成在D:\app_company_qa\company_qa\技术专利文献分析 PatentRAG-Agent目录下
+9.仔细阅读chat_service.py中的generator方法，前端显示的内容按照该方法的内容格式显示，如果是updates则显示为思考过程，如果是messages则将最终答案流式输出
+
+
