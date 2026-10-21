@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>企业智能助手</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+  background: linear-gradient(135deg, #e8eaf6 0%, #f5f5f5 50%, #e3f2fd 100%);
+  min-height: 100vh;
+  color: #1a1a2e;
+}
+
+/* Nav */
+.nav {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding: 0 24px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav .brand {
+  font-weight: 700;
+  font-size: 16px;
+  color: #1a73e8;
+  margin-right: 20px;
+  letter-spacing: 0.5px;
+}
+.nav a {
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+.nav a:hover { background: rgba(26,115,232,0.08); color: #1a73e8; }
+.nav a.active { background: rgba(26,115,232,0.12); color: #1a73e8; }
+.nav .right { margin-left: auto; font-size: 13px; color: #888; display: flex; align-items: center; gap: 8px; }
+.nav .right .avatar {
+  width: 28px; height: 28px; border-radius: 50%; background: #1a73e8;
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+}
+.btn-switch {
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1;
+  margin-left: 4px;
+}
+.btn-switch:hover { background: #f5f5f5; border-color: #ccc; }
+
+.container { max-width: 880px; margin: 0 auto; padding: 24px 16px 40px; }
+
+/* Card */
+.card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  padding: 28px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s;
+}
+.card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1a1a2e;
+}
+.card h2 .icon { font-size: 20px; }
+
+/* Login */
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  position: relative;
+  overflow: hidden;
+}
+.login-wrap::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(102,126,234,0.15) 0%, transparent 70%);
+  top: -200px; right: -200px;
+  pointer-events: none;
+}
+.login-wrap::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(118,75,162,0.12) 0%, transparent 70%);
+  bottom: -100px; left: -100px;
+  pointer-events: none;
+}
+.login-box {
+  background: rgba(255,255,255,0.97);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 44px 40px 36px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+  position: relative;
+  animation: loginFadeIn 0.5s ease;
+}
+@keyframes loginFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.login-box .logo {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.login-box .logo .logo-icon {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 26px;
+  box-shadow: 0 8px 24px rgba(102,126,234,0.3);
+}
+.login-box .logo h1 { font-size: 22px; color: #1a1a2e; margin-bottom: 4px; font-weight: 700; }
+.login-box .logo p { font-size: 14px; color: #999; }
+label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #444; }
+.input-wrap {
+  position: relative;
+  margin-bottom: 20px;
+}
+.input-wrap .input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #bbb;
+  pointer-events: none;
+  transition: color 0.2s;
+}
+.input-wrap:focus-within .input-icon { color: #1a73e8; }
+.input-wrap input {
+  width: 100%;
+  padding: 13px 16px 13px 44px;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  background: #f7f8fa;
+}
+.input-wrap input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102,126,234,0.12);
+  background: #fff;
+}
+.input-wrap input::placeholder { color: #bbb; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn:hover { background: #1557b0; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,115,232,0.3); }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-block { width: 100%; }
+.btn-sm { padding: 8px 18px; font-size: 13px; border-radius: 10px; }
+.btn-outline { background: transparent; color: #1a73e8; border: 2px solid #1a73e8; }
+.btn-outline:hover { background: rgba(26,115,232,0.06); box-shadow: none; }
+.btn-outline.active { background: #1a73e8; color: #fff; }
+
+.err { color: #d93025; font-size: 13px; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+.success { color: #188038; font-size: 13px; }
+
+.hidden { display: none !important; }
+
+/* Chat */
+.msg-area {
+  height: 420px;
+  overflow-y: auto;
+  padding: 8px 4px;
+  margin-bottom: 16px;
+  scroll-behavior: smooth;
+}
+.msg-area::-webkit-scrollbar { width: 6px; }
+.msg-area::-webkit-scrollbar-track { background: transparent; }
+.msg-area::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+.msg-area::-webkit-scrollbar-thumb:hover { background: #bbb; }
+
+.msg-area .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #bbb;
+  font-size: 14px;
+}
+.msg-area .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+
+.msg { margin-bottom: 16px; display: flex; gap: 10px; }
+.msg.user { flex-direction: row-reverse; }
+.msg .avatar-icon {
+  width: 32px; height: 32px; border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+}
+.msg.user .avatar-icon { background: #1a73e8; color: #fff; }
+.msg.assistant .avatar-icon { background: #f0f0f0; color: #666; }
+.msg .bubble {
+  padding: 12px 16px;
+  max-width: 75%;
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: break-word;
+}
+.msg.user .bubble {
+  background: #1a73e8;
+  color: #fff;
+  border-radius: 18px 18px 4px 18px;
+}
+.msg.assistant .bubble {
+  background: #f0f2f5;
+  color: #1a1a2e;
+  border-radius: 18px 18px 18px 4px;
+  white-space: normal;
+}
+.msg.assistant .bubble a { color: #1a73e8; text-decoration: underline; }
+.msg.assistant .bubble a:hover { color: #1557b0; }
+
+/* Markdown */
+.md-blank { height: 10px; }
+.md-list { margin: 6px 0 6px 4px; padding-left: 20px; }
+.md-list li { margin: 3px 0; }
+.md-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 8px 0;
+  font-size: 13px;
+  border: 1px solid #e3e6ea;
+  white-space: normal;
+}
+.md-table th, .md-table td {
+  border: 1px solid #e3e6ea;
+  padding: 7px 12px;
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+}
+.md-table th { background: #f5f7fa; color: #333; font-weight: 600; }
+.md-table tr:nth-child(2n) td { background: #fafbfc; }
+.md-table code { background: #f0f1f3; padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+.bubble strong { font-weight: 600; }
+
+.typing-indicator {
+  display: flex; gap: 4px; padding: 4px 0;
+}
+.typing-indicator span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #bbb;
+  animation: typing 1.4s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.input-row .input-wrap { flex: 1; margin-bottom: 0; }
+.input-row textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+  background: #fafafa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-height: 46px;
+  max-height: 120px;
+  line-height: 1.4;
+}
+.input-row textarea:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.1);
+  background: #fff;
+}
+.input-row textarea::placeholder { color: #bbb; }
+
+/* Recommend */
+.tab-bar { display: flex; gap: 8px; margin-bottom: 20px; }
+.doc-list { display: grid; gap: 12px; }
+.doc-item {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px 18px;
+  transition: all 0.2s;
+  cursor: default;
+}
+.doc-item:hover { border-color: #d0d7de; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.doc-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #1a1a2e; }
+.doc-item .meta { font-size: 12px; color: #888; display: flex; gap: 12px; flex-wrap: wrap; }
+.doc-item .meta span { display: flex; align-items: center; gap: 4px; }
+.tag {
+  display: inline-block;
+  background: #e8f0fe;
+  color: #1a73e8;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.loading {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 40px 0; color: #888; font-size: 14px;
+}
+.spinner { width: 20px; height: 20px; border: 2px solid #e0e0e0; border-top-color: #1a73e8; border-radius: 50%; animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 640px) {
+  .container { padding: 16px 12px 24px; }
+  .card { padding: 20px; border-radius: 12px; }
+  .msg .bubble { max-width: 85%; font-size: 14px; }
+  .nav { padding: 0 12px; gap: 2px; }
+  .nav a { padding: 8px 12px; font-size: 13px; }
+  .nav .brand { font-size: 14px; margin-right: 8px; }
+  .login-box { padding: 28px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 登录页 -->
+<div id="pageLogin" class="login-wrap">
+  <div class="login-box">
+    <div class="logo">
+      <div class="logo-icon">🧠</div>
+      <h1>企业智能助手</h1>
+      <p>登录您的账户以继续</p>
+    </div>
+    <label>用户名</label>
+    <div class="input-wrap">
+      <span class="input-icon">👤</span>
+      <input id="loginUser" placeholder="请输入用户名" value="admin" autocomplete="username">
+    </div>
+    <label>密码</label>
+    <div class="input-wrap">
+      <span class="input-icon">🔑</span>
+      <input id="loginPass" type="password" placeholder="请输入密码" value="123456" autocomplete="current-password">
+    </div>
+    <div id="loginErr" class="err hidden"></div>
+    <button class="btn btn-block" onclick="login()" id="loginBtn" style="margin-top:4px;">登录</button>
+  </div>
+</div>
+
+<!-- 主界面 -->
+<div id="appMain" class="hidden">
+  <div class="nav">
+    <span class="brand">企业智能助手</span>
+    <a class="active" onclick="showPage('chat', this)">智能问答</a>
+    <a onclick="showPage('recommend', this)">文档推荐</a>
+    <span class="right" id="navUser"></span>
+    <button class="btn-switch" onclick="switchAccount()" title="切换账户">🔄</button>
+  </div>
+  <div class="container">
+
+    <!-- 智能问答 -->
+    <div id="pageChat">
+      <div class="card">
+        <h2><span class="icon">💬</span> 智能问答</h2>
+        <div class="msg-area" id="chatArea">
+          <div class="empty-state">
+            <div class="icon">💡</div>
+            <div>输入问题开始对话</div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-wrap">
+            <textarea id="chatInput" placeholder="输入问题，Enter 发送，Shift+Enter 换行..." rows="1"></textarea>
+          </div>
+          <button class="btn" id="chatBtn" onclick="sendChat()">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 文档推荐 -->
+    <div id="pageRecommend" class="hidden">
+      <div class="card">
+        <h2><span class="icon">📄</span> 文档推荐</h2>
+        <div class="tab-bar">
+          <button class="btn btn-sm btn-outline active" data-tab="personalized">✨ 个性化推荐</button>
+          <button class="btn btn-sm btn-outline" data-tab="hot">🔥 热门推荐</button>
+        </div>
+        <div id="recList"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const BASE = 'http://localhost:8000/api';
+let token = localStorage.getItem('token') || '';
+let sessionId = localStorage.getItem('session_id') || '';
+let chatting = false;
+
+function $(id) { return document.getElementById(id); }
+
+function showPage(name, el) {
+  document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+  document.querySelectorAll('.container > div[id^="page"]').forEach(d => d.classList.add('hidden'));
+  const page = $('page' + name.charAt(0).toUpperCase() + name.slice(1));
+  if (page) page.classList.remove('hidden');
+  if (el) el.classList.add('active');
+  if (name === 'recommend') loadRecommend($('recList').getAttribute('data-type') || 'personalized');
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function mdInline(s) {
+  if (!s) return '';
+  return s
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/https?:\/\/[^\s<]+/g, url => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+}
+function isTableSep(line) {
+  return /^\s*\|[\s:\-|]+\|\s*$/.test(line) && line.indexOf('-') !== -1;
+}
+function parseTableRow(line) {
+  return line.split('|').slice(1, -1).map(c => c.trim());
+}
+function renderMd(text) {
+  if (!text) return '';
+  const lines = escHtml(text).split('\n');
+  const out = [];
+  const listRe = /^\s*(?:[-*]\s+|\d+\.\s+)/;
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i].trim();
+    if (line.indexOf('|') === 0 && i + 1 < lines.length && isTableSep(lines[i + 1].trim())) {
+      const header = parseTableRow(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].trim().indexOf('|') === 0) {
+        rows.push(parseTableRow(lines[i]));
+        i++;
+      }
+      let t = '<table class="md-table"><thead><tr>';
+      for (const h of header) t += '<th>' + mdInline(h) + '</th>';
+      t += '</tr></thead><tbody>';
+      for (const r of rows) {
+        t += '<tr>';
+        for (const c of r) t += '<td>' + mdInline(c) + '</td>';
+        t += '</tr>';
+      }
+      out.push(t + '</tbody></table>');
+    } else if (line === '') {
+      out.push('<div class="md-blank"></div>');
+      i++;
+    } else if (listRe.test(lines[i])) {
+      const items = [];
+      while (i < lines.length && listRe.test(lines[i])) {
+        items.push(lines[i].replace(listRe, '').trim());
+        i++;
+      }
+      out.push('<ul class="md-list"><li>' + items.map(it => mdInline(it)).join('</li><li>') + '</li></ul>');
+    } else {
+      out.push('<div>' + mdInline(line) + '</div>');
+      i++;
+    }
+  }
+  return out.join('');
+}
+
+// Enter to send, Shift+Enter for newline
+$('chatInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChat();
+  }
+});
+// Auto-resize textarea
+$('chatInput').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+// Enter on login
+$('loginPass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') login();
+});
+
+async function login() {
+  const username = $('loginUser').value.trim();
+  const password = $('loginPass').value.trim();
+  const errEl = $('loginErr');
+  if (!username || !password) { errEl.textContent = '请输入用户名和密码'; errEl.classList.remove('hidden'); return; }
+  errEl.classList.add('hidden');
+  $('loginBtn').disabled = true;
+  $('loginBtn').textContent = '登录中...';
+  try {
+    const r = await fetch(BASE + '/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) });
+    const d = await r.json();
+    if (d.code === 200) {
+      token = d.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', username);
+      $('pageLogin').classList.add('hidden');
+      $('appMain').classList.remove('hidden');
+      const initial = username.charAt(0).toUpperCase();
+      $('navUser').innerHTML = '<div class="avatar">' + initial + '</div>' + username;
+      showPage('chat');
+    } else {
+      errEl.textContent = d.message;
+      errEl.classList.remove('hidden');
+    }
+  } catch(e) {
+    errEl.textContent = '连接失败: ' + e.message;
+    errEl.classList.remove('hidden');
+  }
+  $('loginBtn').disabled = false;
+  $('loginBtn').textContent = '登录';
+}
+
+async function sendChat() {
+  const input = $('chatInput');
+  const question = input.value.trim();
+  if (!question || chatting) return;
+  chatting = true;
+  $('chatBtn').disabled = true;
+
+  const area = $('chatArea');
+  // Remove empty state if present
+  const empty = area.querySelector('.empty-state');
+  if (empty) empty.remove();
+
+  const userDiv = document.createElement('div');
+  userDiv.className = 'msg user';
+  userDiv.innerHTML = '<div class="avatar-icon">你</div><div class="bubble">' + escHtml(question) + '</div>';
+  area.appendChild(userDiv);
+
+  const asstDiv = document.createElement('div');
+  asstDiv.className = 'msg assistant';
+  const avatarIcon = document.createElement('div');
+  avatarIcon.className = 'avatar-icon';
+  avatarIcon.textContent = 'AI';
+  asstDiv.appendChild(avatarIcon);
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  asstDiv.appendChild(bubble);
+
+  // Typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'typing-indicator';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  bubble.appendChild(typing);
+
+  area.appendChild(asstDiv);
+  area.scrollTop = area.scrollHeight;
+  input.value = '';
+  input.style.height = 'auto';
+
+  let acc = '';
+  try {
+    const r = await fetch(BASE + '/chat/stream?question=' + encodeURIComponent(question) + '&session_id=' + encodeURIComponent(sessionId), {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const reader = r.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        try {
+          const j = JSON.parse(line);
+          if (j.err) {
+            typing.remove();
+            acc += '\n[错误] ' + j.err;
+            bubble.innerHTML = renderMd(acc);
+            break;
+          }
+          if (j.c) {
+            typing.remove();
+            acc += j.c;
+            bubble.innerHTML = renderMd(acc);
+          }
+        } catch(e) {}
+      }
+      area.scrollTop = area.scrollHeight;
+    }
+  } catch(e) {
+    typing.remove();
+    acc += '\n[请求失败] ' + e.message;
+    bubble.innerHTML = renderMd(acc);
+  }
+  chatting = false;
+  $('chatBtn').disabled = false;
+  area.scrollTop = area.scrollHeight;
+}
+
+// Recommend tab switching (fixed event.target bug)
+function switchRecTab(type, btn) {
+  document.querySelectorAll('.tab-bar .btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  $('recList').setAttribute('data-type', type);
+  loadRecommend(type);
+}
+
+// Delegate tab clicks
+document.querySelector('.tab-bar').addEventListener('click', function(e) {
+  const btn = e.target.closest('.btn');
+  if (!btn) return;
+  const type = btn.getAttribute('data-tab');
+  if (type) switchRecTab(type, btn);
+});
+
+let recType = 'personalized';
+async function loadRecommend(type) {
+  recType = type;
+  $('recList').innerHTML = '<div class="loading"><div class="spinner"></div> 加载中...</div>';
+  try {
+    const opts = { headers: {} };
+    if (!token) { $('recList').innerHTML = '<p class="err">⚠️ 请先登录</p>'; return; }
+    opts.headers['Authorization'] = 'Bearer ' + token;
+    const url = BASE + '/recommend/' + type + '?top_k=10';
+    const r = await fetch(url, opts);
+    const d = await r.json();
+    if (d.code !== 200) { $('recList').innerHTML = '<p class="err">⚠️ ' + d.message + '</p>'; return; }
+    if (!d.data || d.data.length === 0) { $('recList').innerHTML = '<p style="color:#888;text-align:center;padding:20px 0;">暂无推荐</p>'; return; }
+    let html = '<div class="doc-list">';
+    for (const doc of d.data) {
+      const tags = (doc.tags || []).map(t => '<span class="tag">' + escHtml(typeof t === 'object' ? t.name||'' : t) + '</span>').join('');
+      html += '<div class="doc-item"><h4>📄 ' + escHtml(doc.filename) + '</h4>';
+      html += '<div class="meta"><span>🏢 ' + escHtml(doc.department || '-') + '</span><span>🔒 ' + escHtml(doc.permission || '-') + '</span></div>';
+      if (tags) html += '<div style="margin-top:8px;">' + tags + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+    $('recList').innerHTML = html;
+  } catch(e) {
+    $('recList').innerHTML = '<p class="err">⚠️ 加载失败: ' + e.message + '</p>';
+  }
+}
+
+function switchAccount() {
+  token = '';
+  localStorage.removeItem('token');
+  const area = $('chatArea');
+  area.innerHTML = '<div class="empty-state"><div class="icon">💡</div><div>输入问题开始对话</div></div>';
+  $('appMain').classList.add('hidden');
+  $('pageLogin').classList.remove('hidden');
+  $('loginUser').value = '';
+  $('loginPass').value = '';
+  $('loginErr').classList.add('hidden');
+}
+
+// 文档链接点击：带 token 请求 /api/docstore/，新窗口展示内容（防止直接访问泄露）
+document.addEventListener('click', async function(e) {
+  const a = e.target.closest('a[href*="/docstore/"]');
+  if (!a) return;
+  e.preventDefault();
+  const href = a.getAttribute('href') || '';
+  const filename = href.split('/').pop();
+  try {
+    const r = await fetch(BASE + '/docstore/' + encodeURIComponent(filename), {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const text = await r.text();
+    if (!r.ok) { alert('无权访问该文档'); return; }
+    const w = window.open('', '_blank');
+    if (!w) { alert('请允许浏览器弹窗后再试'); return; }
+    w.document.write('<html><head><meta charset="utf-8"><title>' + escHtml(filename) + '</title><style>body{font-family:system-ui,"Microsoft YaHei",sans-serif;padding:28px;line-height:1.7;color:#222;}h2{margin-bottom:16px;}</style></head><body>');
+    w.document.write('<h2>' + escHtml(filename) + '</h2>');
+    w.document.write('<div>' + escHtml(text) + '</div>');
+    w.document.write('</body></html>');
+    w.document.close();
+  } catch(err) {
+    alert('加载失败: ' + err.message);
+  }
+});
+
+// 初始化
+(async function() {
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem('session_id', sessionId);
+  }
+  if (token && token.length > 10) {
+    $('pageLogin').classList.add('hidden');
+    $('appMain').classList.remove('hidden');
+    const savedUser = localStorage.getItem('username') || '用户';
+    const initial = savedUser.charAt(0).toUpperCase();
+    $('navUser').innerHTML = '<div class="avatar">' + initial + '</div>' + savedUser;
+    showPage('chat');
+  }
+  // login page is default visible
+})();
+</script>
+</body>
+</html>

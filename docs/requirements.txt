@@ -1,0 +1,41 @@
+# Web框架
+fastapi
+uvicorn[standard]
+
+# LangChain核心
+langchain
+langchain-core
+langchain-community
+langchain-openai
+langchain-ollama
+langchain-chroma
+langgraph
+
+# 数据库
+sqlalchemy
+pymysql
+
+# 向量数据库
+chromadb
+
+# 搜索引擎
+elasticsearch
+
+# 缓存
+redis
+
+# 工具库
+pydantic
+python-dotenv
+python-jose[cryptography]
+passlib
+
+# 文档处理
+unstructured
+pymupdf
+docx2txt
+openpyxl
+python-pptx
+
+# 日志
+loguru
